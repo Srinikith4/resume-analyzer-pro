@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <meta charset="utf-8" />
+    <title>Role Roadmap</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            background: #f3f5f7;
+            margin: 0
+        }
+
+        .wrap {
+            max-width: 980px;
+            margin: 40px auto;
+            padding: 0 18px
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, .08);
+            padding: 26px
+        }
+
+        .btn {
+            border: 0;
+            border-radius: 999px;
+            padding: 10px 14px;
+            background: #eef0f4;
+            cursor: pointer
+        }
+
+        .muted {
+            color: #667085
+        }
+
+        .node {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            margin-top: 14px
+        }
+
+        .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            margin-top: 6px
+        }
+
+        .line {
+            width: 2px;
+            background: #e6e7eb;
+            margin-left: 6px
+        }
+
+        .box {
+            border: 1px solid #eef0f4;
+            border-radius: 14px;
+            padding: 12px;
+            flex: 1
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            background: #eef0f4;
+            margin-left: 6px
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-card">
+        <div class="wrap">
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+                    <div>
+                        <h2 style="margin:0;">Roadmap</h2>
+                        <div class="muted">{{ current.path }}</div>
+                        <div class="muted" style="margin-top:4px;">Green = already present in resume • Red = learn next
+                        </div>
+                    </div>
+                    <a
+                        href="{{ url_for('analyze', role=current.role, category=current.category, track=current.track) }}">
+                        <button class="btn">← Back</button>
+                    </a>
+                </div>
+
+                <div style="margin-top:18px;">
+                    {% for st in steps %}
+                    <div class="node">
+                        <div>
+                            <div class="dot" style="background: {{ '#22c55e' if st.has else '#ef4444' }};"></div>
+                            {% if not loop.last %}
+                            <div class="line" style="height: 34px;"></div>
+                            {% endif %}
+                        </div>
+                        <div class="box">
+                            <div style="font-weight:900;">
+                                {{ st.skill }}
+                                <span class="tag">{{ st.level_label }}</span>
+                                <span class="tag">~{{ st.weeks }} weeks</span>
+                                {% if st.has %}
+                                <span class="tag" style="background:#e7f6ec;border:1px solid #bfe7c9;">Detected</span>
+                                {% else %}
+                                <span class="tag" style="background:#ffecec;border:1px solid #ffc6c6;">Missing</span>
+                                {% endif %}
+                            </div>
+                            <div class="muted" style="margin-top:6px;">
+                                Suggested order: build basics → intermediate → advanced.
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <meta charset="utf-8" />
+    <title>{{ title }} • Analyzer</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            background: #f3f5f7;
+            margin: 0
+        }
+
+        .wrap {
+            max-width: 1050px;
+            margin: 40px auto;
+            padding: 0 18px
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, .08);
+            padding: 28px
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px
+        }
+
+        .btn {
+            border: 0;
+            border-radius: 999px;
+            padding: 10px 14px;
+            background: #eef0f4;
+            cursor: pointer
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 18px;
+            margin-top: 18px
+        }
+
+        .panel {
+            border: 1px solid #eef0f4;
+            border-radius: 16px;
+            padding: 16px
+        }
+
+        .pill {
+            display: inline-block;
+            margin: 6px 6px 0 0;
+            padding: 7px 12px;
+            border-radius: 999px;
+            font-size: 13px;
+            background: #eef0f4
+        }
+
+        .pill.ok {
+            background: #e7f6ec;
+            border: 1px solid #bfe7c9
+        }
+
+        .pill.bad {
+            background: #ffecec;
+            border: 1px solid #ffc6c6
+        }
+
+        .pill.gray {
+            background: #f3f4f6;
+            border: 1px solid #e6e7eb
+        }
+
+        .big {
+            font-size: 36px;
+            font-weight: 800;
+            margin: 0
+        }
+
+        .barwrap {
+            height: 10px;
+            background: #eef0f4;
+            border-radius: 99px;
+            overflow: hidden
+        }
+
+        .bar {
+            height: 100%;
+            width: 0%;
+            background: #f59e0b;
+            border-radius: 99px;
+            transition: width .4s
+        }
+
+        .row {
+            display: flex;
+            gap: 12px;
+            align-items: center
+        }
+
+        .askbox {
+            margin-top: 12px
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid #e6e7eb;
+            outline: none
+        }
+
+        .askrow {
+            display: grid;
+            grid-template-columns: 1fr 90px;
+            gap: 10px;
+            margin-top: 10px
+        }
+
+        .askbtn {
+            border: 0;
+            border-radius: 12px;
+            background: #111;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer
+        }
+
+        .primary {
+            width: 100%;
+            padding: 12px;
+            border-radius: 14px;
+            border: 0;
+            background: #111;
+            color: #fff;
+            font-weight: 800;
+            cursor: pointer
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-card">
+        <div class="wrap">
+            <div class="card">
+                <div class="top">
+                    <div>
+                        <h1 style="margin:0 0 6px 0;">{{ title }}</h1>
+                        <div style="color:#667085;">{{ path }}</div>
+                    </div>
+                    <a href="{{ url_for('home') }}"><button class="btn">← Change Role</button></a>
+                </div>
+
+                <div class="grid">
+                    <div class="panel">
+                        <h3 style="margin-top:0;">Upload Resume (PDF)</h3>
+                        <div style="color:#667085;margin-bottom:10px;">We’ll analyze your resume against the role
+                            blueprint.
+                        </div>
+
+                        <form method="POST" enctype="multipart/form-data">
+                            <input type="file" name="resume" accept=".pdf" required />
+                            <div style="height:10px"></div>
+                            <button class="primary" type="submit">Analyze</button>
+                        </form>
+
+                        {% if error %}
+                        <div style="margin-top:10px;color:#b42318;font-weight:700;">{{ error }}</div>
+                        {% endif %}
+
+                        <div style="height:18px"></div>
+
+                        <div class="panel" style="border:none;background:#fafafa;">
+                            <div class="row">
+                                <div class="big">{% if score is not none %}{{ score }}%{% else %}--{% endif %}</div>
+                                <div style="flex:1">
+                                    <div style="font-weight:700;">Role Match Score</div>
+                                    <div style="color:#667085;font-size:13px;">Based on role-required skills found in
+                                        your
+                                        resume.</div>
+                                    <div style="height:10px"></div>
+                                    <div class="barwrap">
+                                        <div class="bar" id="scoreBar"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="height:14px"></div>
+
+                        <div style="font-weight:800;margin-bottom:8px;">Role Skills Blueprint</div>
+                        {% for s in blueprint %}
+                        <span class="pill gray">{{ s }}</span>
+                        {% endfor %}
+
+                        <div style="height:14px"></div>
+
+                        <div class="row" style="gap:10px;">
+                            <a href="{{ url_for('suitable') }}"><button class="btn">✅ Suitable Roles</button></a>
+                            <a href="{{ url_for('roadmap') }}"><button class="btn">🗺️ Roadmap</button></a>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="row" style="justify-content:space-between;">
+                            <div style="font-weight:900;">Matched Skills</div>
+                            <div style="font-weight:900;">Missing Skills</div>
+                        </div>
+
+                        <div class="row" style="align-items:flex-start;">
+                            <div style="flex:1">
+                                {% for s in matched %}
+                                <span class="pill ok">{{ s }}</span>
+                                {% endfor %}
+                                {% if matched|length == 0 %}
+                                <div style="color:#667085;margin-top:8px;">No matched skills yet (upload a resume).
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div style="flex:1">
+                                {% for s in missing %}
+                                <span class="pill bad">{{ s }}</span>
+                                {% endfor %}
+                                {% if missing|length == 0 %}
+                                <div style="color:#667085;margin-top:8px;">No missing skills (or upload a resume).</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div style="height:14px"></div>
+                        <div style="font-weight:900;">Skills Detected in Resume</div>
+                        <div style="color:#667085;font-size:13px;margin-top:4px;">(Shows after you upload a resume)
+                        </div>
+
+                        <div style="margin-top:8px;">
+                            {% for s in detected %}
+                            <span class="pill gray">{{ s }}</span>
+                            {% endfor %}
+                            {% if detected|length == 0 %}
+                            <div style="color:#667085;margin-top:8px;">Nothing detected yet.</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="askbox panel" style="margin-top:16px;">
+                            <div style="font-weight:900;">Ask anything about the role</div>
+                            <div style="color:#667085;font-size:13px;margin-top:4px;">
+                                Examples: “what remaining skills do I need?” • “how to improve my resume?” • “give me a
+                                roadmap”
+                            </div>
+
+                            <div class="askrow">
+                                <input id="q" type="text" placeholder="Type your question..." />
+                                <button id="askBtn" class="askbtn">Ask</button>
+                            </div>
+
+                            <div id="ans" style="white-space:pre-wrap;margin-top:10px;color:#111;font-weight:600;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // progress bar fill
+            const score = {{ (score if score is not none else 0) }};
+            const bar = document.getElementById("scoreBar");
+            if (bar) {
+                bar.style.width = score + "%";
+                // color shift
+                if (score < 40) bar.style.background = "#ef4444";
+                else if (score < 70) bar.style.background = "#f59e0b";
+                else bar.style.background = "#22c55e";
+            }
+
+            // Ask endpoint
+            const btn = document.getElementById("askBtn");
+            const q = document.getElementById("q");
+            const ans = document.getElementById("ans");
+
+            async function askNow() {
+                const text = (q.value || "").trim();
+                if (!text) { ans.textContent = "Type a question first."; return; }
+
+                ans.textContent = "Thinking...";
+                try {
+                    const res = await fetch("/ask", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ q: text })
+                    });
+                    const data = await res.json();
+                    ans.textContent = data.answer || "No response.";
+                } catch (e) {
+                    ans.textContent = "Error calling /ask. Check Flask terminal for errors.";
+                }
+            }
+
+            btn.addEventListener("click", askNow);
+            q.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") askNow();
+            });
+        </script>
+    </div>
+</body>
+
+</html>

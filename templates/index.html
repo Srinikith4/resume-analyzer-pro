@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>AI Resume Analyzer</title>
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 500px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: black;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .skills {
+            margin-top: 20px;
+        }
+
+        .skill {
+            display: inline-block;
+            background: #1976d2;
+            color: white;
+            padding: 6px 12px;
+            margin: 5px;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+
+        .score {
+            font-size: 24px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .missing {
+            margin-top: 15px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>AI Resume Analyzer</h1>
+
+        <form method="POST" enctype="multipart/form-data">
+
+            <input type="file" name="resume" required>
+
+            <br><br>
+
+            <button type="submit">Analyze Resume</button>
+
+        </form>
+
+        {% if score is not none %}
+
+        <div class="score">
+
+            Resume Score: {{score}} / 100
+
+        </div>
+
+        {% endif %}
+
+        {% if skills %}
+
+        <div class="skills">
+
+            {% for skill in skills %}
+
+            <span class="skill">{{skill}}</span>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+        {% if missing %}
+
+        <div class="missing">
+
+            <strong>Suggested Skills to Learn:</strong>
+
+            <br><br>
+
+            {{ missing | join(', ') }}
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</body>
+
+</html>
