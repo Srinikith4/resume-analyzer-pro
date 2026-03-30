@@ -15,9 +15,8 @@ from resume_parser import extract_text_from_pdf
 from skill_extractor import extract_skills
 
 
-# -------------------------
 # App config
-# -------------------------
+
 ALLOWED_EXTENSIONS = {"pdf"}
 
 app = Flask(__name__)
@@ -33,9 +32,9 @@ GROQ_MODEL = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile").strip()
 groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
 
-# -------------------------
+
 # Helpers
-# -------------------------
+
 def allowed_file(filename: str) -> bool:
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -78,9 +77,9 @@ def save_analysis(data: dict[str, Any]) -> None:
     session["analysis"] = data
 
 
-# -------------------------
+
 # Routes
-# -------------------------
+
 @app.route("/", methods=["GET"])
 def home():
     # Your home.html uses roles + roles_data for dropdown chaining
